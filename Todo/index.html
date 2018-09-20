@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>JELIJS</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="../dist/jelijs.js"></script>
+    <script src="scripts/app.js"></script>
+</head>
+
+<body j-module="Todo" :cloak class="j-cloak">
+    <nav class="navbar navbar-inverse navbar-static-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">
+                Todo Application
+              </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" :controller="todoController as $todo">
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <form @submit="$todo.addTodo()">
+                            <!-- :min="10" :pattern="^\d+$" -->
+                            <input type="text" :min="20" :model="$todo.todoDescription" class="form-control">
+                        </form>
+                    </div>
+                    <ul class="list-group">
+                        <li class="list-group-item"><strong>Todo Items: ${$todo.todos.length -  $todo.removeItemCount}</strong>
+                            <div class="pull-right"><strong>Marked as done: ${$todo.removeItemCount}</strong></div>
+                        </li>
+                        <li :for="todo in $todo.todos" class="list-group-item">
+                            <div class="row">
+                                <div class="col-sm-1">
+                                    <input type="checkbox" :model="todo.done" @change="$todo.markAsRemoved(todo.done)">
+                                </div>
+                                <div class="col-sm-8">
+                                    <span :style="{text-decoration: todo.done ? 'line-through' : 'none'}">
+                                        ${:todo.description}
+                                    </span>
+                                </div>
+                                <div class="col-sm-3">
+                                    <button class="btn btn-primary btn-sm pull-right" @click="todo.addDescription = !todo.addDescription">
+                                      ${(todo.addDescription?'Done':'Edit')}
+                                    </button>
+                                </div>
+                            </div>
+                            <h5>
+                                <p class="alert alert-info" :show="!todo.addDescription"> ${todo.details} </p>
+                                <div :show="todo.addDescription" class="form-group">
+                                    <textarea :model="todo.details" class="form-control"></textarea>
+                                </div>
+                            </h5>
+
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</body>
+
+</html>
