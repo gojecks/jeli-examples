@@ -1,0 +1,61 @@
+<!doctype>
+<html>
+
+<head>
+    <title>Simple In-App Server Socket </title>
+    <script src="../../jeli.http.mock/dist/jeli.http.min.js"></script>
+</head>
+
+<body>
+    <h4>Server is active:</h4>
+    <div class>
+        <p>Host: localhost</p>
+        <p>Port: 3000</p>
+    </div>
+
+    <h4>Connected Users:</h4>
+    <pre id="container"></pre>
+    <script>
+        var jhttp = new jHttp();
+        var server = localServer(true);
+        var _socket = new jhttp.socket(server);
+        var log = document.getElementById('container');
+
+        _socket.connect({
+            domain: 'localhost',
+            port: 3000
+        }, socketHandler);
+
+        function socketHandler(socket) {
+            server.onDestroy(function(e) {
+                socket.emit('server.destroyed', {});
+            });
+
+            socket
+                .emit('server.reconnected', {})
+                .on('user.connected', function(e) {
+                    logMessage('<b>User:' + e._data.user + ' is back online</b>');
+                })
+                .on('user.reconnected', function(e) {
+                    logMessage('<b>User:' + e._data.user + ' reconnected</b>');
+                })
+                .on('new.message', function(e) {
+                    logMessage('<b>User(' + e._data.user + ') sent a message</b>');
+                })
+                .on('user.disconnected', function(ev) {
+                    console.log(ev);
+                })
+                .on('user.disconnected', function(e) {
+                    logMessage('<b>User(' + e._data.user + ') is disconnected.</b>');
+                });
+        }
+
+        function logMessage(msg) {
+            var div = document.createElement('p');
+            div.innerHTML = msg;
+            log.append(div);
+        }
+    </script>
+</body>
+
+</html>

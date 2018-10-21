@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Simple Client Socket </title>
+    <script src="../../jeli.http.mock/dist/jeli.http.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            padding: 20px;
+            padding-top: 70px;
+            /*background: #2c3e50;*/
+        }
+        
+        .prn {
+            padding-right: 0;
+        }
+        
+        .pln {
+            padding-left: 0;
+        }
+        
+        .pn {
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand">Simple In-App Client Socket</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="col-xs-3 col-md-3"></div>
+        <div class="col-xs-6 col-md-6">
+            <div class="panel panel-default" :if="chat.userConnected">
+                <div class="panel-body pn">
+                    <div class="form-group" style="max-height:76%;overflow-x:hidden">
+                        <ul class="list-group">
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <textarea class="form-control" onkeydown="$postChat()"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-3 col-md-3"></div>
+    </div>
+
+    <script>
+        var server = new jHttp({});
+        var app = new server.app();
+        var ls = localServer();
+        var io = (new server.socket(ls));
+        var username = 'Annonymous';
+        io.connect({
+            domain: 'localhost',
+            port: 3000
+        }, socketHandler);
+
+        function socketHandler(socket) {
+            ls.onDestroy(function() {
+                socket.emit('user.disconnected', {
+                    user: username
+                });
+            });
+
+            socket
+                .emit('user.connected', {
+                    user: username
+                })
+                .on('new.message', function(e) {
+
+                });
+
+
+            socket.on('server.destroyed', function(eData) {
+                alert('Server Instance is destroyed');
+            });
+
+            socket.on('server.reconnected', function() {
+                socket.emit('user.reconnected', {
+                    user: username
+                })
+            });
+        }
+
+        function $postChat($ev) {
+            console.log($ev);
+        }
+    </script>
+
+</body>
+
+</html>

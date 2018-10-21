@@ -4,7 +4,8 @@
 <head>
     <title>Simple Chat service </title>
     <!-- <script src="https://unpkg.com/jeli-jdb@0.0.1/jeli.jdb.min.js" crossorigin></script> -->
-    <script src="../dist/jeli.jdb.min.js"></script>
+    <script src="../../Project-jEliJS/dist/jeli.jdb.min.js"></script>
+    <script src="../../jeli.http.mock/dist/jeli.http.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <style>
         * {
@@ -61,16 +62,17 @@
                             <ul class="list-group">
                                 <li :for="(key,chats) in chat.chatList" class="list-group-item">
                                     <div class="clearfix">
-                                        <div class="pull-left"><strong>{%chats._data.user%}</strong> </div>
-                                        <div class="pull-right"><small>{%chats._data.time | dateTime:'YYYY-MM-DD hh:m:s'%}</small></div>
+                                        <div class="pull-left"><strong>{%chats.user%}</strong> </div>
+                                        <!-- <div class="pull-right"><small>{%chats._data.time | dateTime:'YYYY-MM-DD hh:m:s'%}</small></div> -->
                                     </div>
-                                    <small>{%chats._data.message%}</small>
+                                    <small>{%chats.message%}</small>
                                 </li>
                             </ul>
                         </div>
                     </div>
                     <div class="panel-footer">
-                        <textarea class="form-control" @keydown="$postChat($event)"></textarea>
+                        <div class="pas" :if="chat.typing.user"><small>{%chat.typing.user%} is typing...</small></div>
+                        <textarea class="form-control" @keydown="$postChat($event)" @keyup="stopTyping()"></textarea>
                     </div>
                 </div>
             </chat-app>
